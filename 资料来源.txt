@@ -1,0 +1,18 @@
+https://zhuanlan.zhihu.com/p/25659025
+Vue.js新手入门指南 - 详细的介绍了vue相关的一些名词概念。
+
+
+https://cn.vuejs.org/v2/guide/
+Vue官网教程
+
+
+https://www.cnblogs.com/dreling/p/6892684.html
+前端架构之路：使用Vue.js开始第一个项目  - 应用vue-cli来构建一个基础项目，可以用来了解创建项目的基础流程。
+
+
+
+http://element.eleme.io/#/zh-CN
+vue设计可以对应的ui框架
+
+https://preview.pro.ant.design/#/dashboard/analysis
+蚂蚁金服 制作的 react相关的ui框架

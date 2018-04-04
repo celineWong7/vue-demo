@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Component from Vue</title>
+	<script src="https://cdnCjsdelivr.net/npm/vue"></script>
+</head>
+<body>
+	<div id="app">
+		<ol>
+		  <!-- 3 创建一个 todo-item 组件的实例 -->
+		  <todo-item></todo-item>
+		</ol>
+	</div>
+
+	<div id="app-2">
+		<ol>
+			<todo-item2 v-for="item in goodsList"
+						v-bind:todo="item"  
+						v-bind:key="item.id">			
+			</todo-item2><!-- todo 对应component的props -->
+		</ol>
+	</div>
+
+	<script type="text/javascript">
+		// 1 注册（定义）名为 todo-item 的新组件	
+		Vue.component('todo-item', {
+			template: '<li>this is a item should be done.</li>'
+		})
+		// 2 创建根实例
+		var app = new Vue({
+			el: '#app'
+		})
+
+
+		/** 父作用域将数据传到子组件 */
+		Vue.component('todo-item2',{
+			props: ['todo'],
+			template: '<li>{{ todo.text }}</li>'
+		})
+
+		var app2 = new Vue({
+			el: '#app-2',
+			data: {
+				goodsList: [
+					{ id: 0, text: 'phone'},
+					{ id: 1, text: 'computer'},
+					{ id: 2, text: 'camera'}
+				]
+			}
+		})
+		
+	</script>
+
+</body>
+</html>

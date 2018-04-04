@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>模板语法 - 指令</title>
+	<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+</head>
+<body>
+<!-- 指令 (Directives) 是带有 v- 前缀的特殊属性。 -->
+
+<!-- 1 v-if : 根据表达式 seen 的值的真假来插入/移除 <p> 元素。-->
+	<div id="app">
+		<p v-if="seen">YOU SEEN ME</p>
+	</div>
+
+<!-- 2 v-bind : 能够接收一个“参数”，在指令名称之后以冒号表示。 -->
+	<div id="app-2">
+		<a v-bind:href="url">clickme</a>
+	</div>
+
+<!-- 3 v-on : 监听 DOM 事件 -->
+	<div id="app-3">
+		<button v-on:click="doSomething">clickme</button>
+	</div>
+
+<!-- 4 修饰符 : 修饰符 (Modifiers) 是以半角句号 . 指明的特殊后缀，用于指出一个指令应该以特殊方式绑定 -->
+<!--            .prevent 修饰符告诉 v-on 指令对于触发的事件调用 event.preventDefault() -->
+	<div id="app-4">
+		<form v-on:submit.prevent="onSubmit">
+			<button>submit</button>
+		</form>
+	</div>
+
+<!-- 5 缩写 : v-bind对应一个冒号，v-on对应一个@符号 -->
+	<div id="app-5">		
+		<a v-bind:href="url">...</a> <!-- 完整语法 -->		
+		<a :href="url">...</a> <!-- 缩写 -->
+
+		<a v-on:click="doSomething">...</a> <!-- 完整语法 -->		
+		<a @click="doSomething">...</a> <!-- 缩写 -->
+	</div>
+
+	<script type="text/javascript">
+		var app = new Vue({
+			el: '#app',
+			data: {
+				seen: true
+			}
+		})
+
+		var app2 = new Vue({
+			el: '#app-2',
+			data: {
+				url:'http://www.baidu.com'
+			}
+		})
+
+		var app3 = new Vue({
+			el: '#app-3',
+			methods: {
+				doSomething: function(){
+					alert("Hello~");
+				}
+			}
+		})
+
+		var app4 = new Vue({
+			el: '#app-4',
+			methods: {
+				onSubmit: function(){
+					alert("阻止提交事件默认的自刷新动作！")
+				}
+			}
+		})
+	</script>
+
+
+</body>
+</html>

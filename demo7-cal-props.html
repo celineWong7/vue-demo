@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>模板语法 - 计算属性</title>
+	<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+</head>
+<body>
+<!-- 计算属性 computed -->
+
+<!-- 1 模板内的表达式，主要用于简单运算的。若是逻辑比较负责，考虑用计算属性computed，详见2 -->
+	<div id="app">1
+  		{{ message.split('').reverse().join('') }}
+	</div>
+	<hr>
+
+<!-- 2 computed : 复杂逻辑，或是想在模块中多次使用某个逻辑运算，最好使用计算属性。 -->
+	<div id="app-2">2
+		  <p>Original message: "{{ message }}"</p>
+ 		  <p>Computed reversed message: "{{ reversedMessage }}"</p>
+	</div>
+	<hr>
+
+<!-- 3 计算属性缓存 computed VS 方法 methods -->
+<!--   以下代码中的computed 和 methods 方式都能实现反转字符串的效果（注意：如果在同一个模块，定义的方法名不能相同） -->
+<!--   区别：1、计算属性是基于缓存的。只有message发生改变时才会重新求值。
+             2、而方法，每一次重新渲染时都是重新调用，没有所谓的缓存。 -->
+<!--   所以，如果希望是实时变化，就采用方法的方式。比如获取实时时间 -->
+	<div id="app-3">3
+		<p>Original message: "{{ message }}"</p>
+ 		<p>Computed reversed message: "{{ reversedMessage }}"</p>
+ 		<p>Methods  reversed message: "{{ reversedMessage1() }}"</p>
+	</div>
+	<hr>
+
+<!-- 4 计算属性 computed VS 侦听属性 watch -->
+	<div id="app-4">4
+		<p>fullName: {{ fullName }}</p>
+	</div>
+	<hr>
+
+<!-- 5 计算属性的setter : 计算属性默认只有 getter ，不过在需要时你也可以提供一个 setter -->
+	<div id="app-5">5
+		<p>firstName: {{ firstName }}</p>
+		<p>lastName: {{ lastName }}</p>	
+		<p>fullName: {{ fullName }}</p>
+	</div>
+	<hr>
+
+	<script type="text/javascript">
+		var app = new Vue({
+			el: '#app',
+			data: {
+				message: "Hello World!"
+			}
+		})
+
+		var app2 = new Vue({
+			el: '#app-2',
+			data: {
+				message: "Hello World!"
+			},
+			computed: {
+				reversedMessage: function(){ // reversedMessage 是我们声明的一个计算属性
+					return this.message.split('').reverse().join('')
+				}
+			}
+		})
+		//在控制台输入app2.message = 'Goodbye'
+		//            console.log(vm.reversedMessage) // => 'eybdooG'
+
+		var app3 = new Vue({
+			el: '#app-3',
+			data: {
+				message: "Hello World!"
+			},
+			computed: { // 计算属性
+				reversedMessage: function(){ // reversedMessage 是我们声明的一个计算属性
+					return this.message.split('').reverse().join('')
+				}
+			},
+			methods: { // 方法
+				reversedMessage1: function(){ // reversedMessage 是我们声明的一个计算属性
+					return this.message.split('').reverse().join('')
+				}
+			}
+		})
+
+		// var app4 = new Vue({  // watch回调方式命令式且重复的
+		// 	el: '#app-4',
+		// 	data: {
+		// 		firstName: 'Celine',
+		// 		lastName: 'Wang',
+		// 		fullName: 'Celine Wang'
+		// 	},
+		// 	watch: {
+		// 		firstName: function(val){
+		// 			this.fullName = val + ' ' + this.lastName
+		// 		},
+		// 		lastName: function(val){
+		// 			this.fullName = this.firstName + ' ' + val
+		// 		}
+		// 	}
+		// })
+
+		var app44 = new Vue({ // computed 计算属性简洁明了
+			el: '#app-4',
+			data: {
+				firstName: 'Celine',
+				lastName: 'Wang',
+			},
+			computed: {
+				fullName: function(){
+					return this.firstName + ' ' + this.lastName
+				}
+			}
+		})
+		//在控制台输入app44.lastName = 'Lin'   => 页面的fullName会跟着变化
+
+		var app5 = new Vue({
+			el: '#app-5',
+			data: {
+				firstName: 'Celine',
+				lastName: 'Wang',
+			},
+			computed: {
+				fullName: {
+					get: function(){ // getter
+						return this.firstName + ' ' + this.lastName
+					},
+					set: function(newVal){
+						var names = newVal.split(' ')
+						this.firstName = names[0]
+						this.lastName = names[names.length - 1]
+					}
+				}
+			}
+		})
+		//在控制台输入app44.fullName = 'Yu Lin'   => 页面的firstName 和 lastName 也会变化
+	</script>
+
+
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Demo from vuejs.org vedio's case</title>
+	<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+</head>
+<body>
+	<div id="app">{{ message }}</div>
+
+	<div id="app-2" v-bind:title="message">
+		<span>HOVER ME</span>
+	</div>
+
+	<div id="app-3">
+		<p v-if="seen">Now, you see.</p>
+	</div>
+
+	<div id="app-4">
+		<ol>
+			<li v-for="todo in todos">{{ todo }}</li>
+		</ol>
+	</div>
+
+	<div id="app-5">
+		<p>{{ message }}</p>
+		<button v-on:click="reverseMessage">clickme!surprise!</button>
+	</div>
+
+	<div id="app-6">
+		<p>{{ message }}</p>
+		<input v-model="message" type="" name="">
+	</div>
+	<script type="text/javascript">
+	/** app 是一个Vue实例
+	  * el 指定要绑定的元素
+	  * data 指定相关数据 */
+		var app = new Vue({
+			el: '#app',
+			data: {
+				message: 'Hello World!'
+			}
+		})
+
+		var app2 = new Vue({
+			el: '#app-2',
+			data: {
+				message:'页面加载于' + new Date().toLocaleString()
+			}
+		})
+
+		var app3 = new Vue({
+			el: '#app-3',
+			data: {
+				seen: true
+			}
+		})
+
+		var app4 = new Vue({
+			el: '#app-4',
+			data: {
+				todos:['learn HTML', 'learn JS', 'learn VUE']
+			}
+		})
+
+		var app5 = new Vue({
+			el: '#app-5',
+			data: {
+				message: 'Hello World!'
+			},
+			methods: {
+				reverseMessage: function () {
+					this.message = this.message.split('').reverse().join('');
+				}
+			}
+		})
+
+		var app6 = new Vue({
+			el: '#app-6',
+			data: {
+				message: 'Hi~~~'
+			}
+		})
+	</script>
+
+
+</body>
+</html>

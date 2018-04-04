@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>模板语法 - 监听器</title>
+	<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+</head>
+<body>
+<!-- 除了 计算属性 computed ，Vue还有 侦听器 watch，用以执行异步或开销较大的操作时。 -->
+
+	<div id="watch-example">
+		<p>
+	    	Ask a yes/no question:
+	    	<input v-model="question">
+	  	</p>
+	  	<p>{{ answer }}</p>
+	</div>
+
+	<!-- axios库  Vue 核心代码没有AJAX库 ，所以此处要引入axios ajax库 -->
+	<!-- lodash库 此处应用器限制操作频率的函数 _.debounce -->
+	<script src="https://cdn.jsdelivr.net/npm/axios@0.12.0/dist/axios.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/lodash@4.13.1/lodash.min.js"></script>
+	<script type="text/javascript">
+		var app = new Vue({
+			el: '#watch-example',
+			data: {
+				question: '',
+				answer: '你回答了问题，我才会给你答案~'
+			},
+			watch: {
+				question: function (newQuestion, oldQuestion) {
+					this.answer = '等待你的输入ING...'
+					this.getAnswer()
+				}
+			},
+			methods: {
+				// `_.debounce` 是一个通过 Lodash 限制操作频率的函数。在这个例子中，我们希望限制访问 yesno.wtf/api 的频率 AJAX 请求直到用户输入完毕才会发出。
+			    // 以电梯为例，debounce策略的电梯。如果电梯里有人进来，等待15秒。如果又人进来，15秒等待重新计时，直到15秒超时，开始运送。
+			    // 在我们例子中，就是有文本输入，就等待0.5s，如果期间又有输入，0.5s重新计时，直至0.5s过去都没有任何输入，就执行函数。
+			    // 
+			    // 想要了解更多关于`_.debounce` 函数 (及其近亲 `_.throttle`) 的知识，请参考：https://lodash.com/docs#debounce
+				getAnswer: _.debounce(
+					function(){
+						if (this.question.indexOf('?') === -1) {
+							this.answer = '提问需要有问号哦~'
+							return
+						}
+						this.answer = 'Thinking...'
+						var vm = this
+						axios.get('https://yesno.wtf/api')
+							.then(function(response){
+								vm.answer = _.capitalize(response.data.answer)
+							})
+							.catch(function(){
+								vm.answer = '错误！不能访问对应api接口: ' + error
+							})
+					},
+					// 判定用户停止输入等待的毫秒数
+					500 
+				)
+			}
+		})
+
+		
+	</script>
+
+
+</body>
+</html>
