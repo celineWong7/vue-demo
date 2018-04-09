@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>条件渲染</title>
+	<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+</head>
+<body>
+<!-- 1 v-if -->
+<div id="demo1">
+	<!-- 应用在单个元素上 -->
+	<h1 v-if="ok">YES</h1>
+	<h1 v-else>NO</h1>
+	<!-- 想要应用到一组元素上，可以用<template> -->
+	<template v-if="ok">
+		<h1>Title1</h1>
+		<p>ppppppppp1....</p>
+		<p>pppppppppp222222222....</p>
+	</template>
+</div>
+<script type="text/javascript">
+	var demo1 = new Vue({
+		el: '#demo1',
+		data: {
+			ok: true,
+		}
+	})
+</script>
+<hr>
+<!-- 2 v-else 必须紧跟在带 v-if 或者 v-else-if 的元素的后面，否则它将不会被识别。 -->
+<div id="demo2">
+	<div v-if="Math.random() > 0.5">Now you see me.</div>
+	<div v-else>Now you don't.</div>
+</div>
+<script type="text/javascript">
+	var demo2 = new Vue({
+		el: '#demo2',
+	})
+</script>
+<hr>
+<!-- 3 v-else-if 再2.1.0版本中 新增，级 else-if 语块 -->
+<div id="demo3">
+	<div v-if="type === 'A'">
+	  A
+	</div>
+	<div v-else-if="type === 'B'">
+	  B
+	</div>
+	<div v-else-if="type === 'C'">
+	  C
+	</div>
+	<div v-else>
+	  Not A/B/C
+	</div>
+</div>
+<script type="text/javascript">
+	var demo3 = new Vue({
+		el: '#demo3',
+		data: {
+			type: 'D'
+		}
+	})
+</script>
+<hr>
+<!-- 4 key属性管理可以复用的元素 -->
+<div id="demo4">
+
+	<template v-if="loginType === 'username'">
+		<label>Username</label>
+		<input placeholder="Enter your username">
+	</template>
+	<template v-else>
+		<label>Email&emsp;</label>
+		<input placeholder="Enter your email address">
+	</template>
+	<!-- 上面的代码中切换 loginType 将不会清除用户已经输入的内容。因为两个模板使用了相同的元素，<input> 不会被替换掉——仅仅是替换了它的 placeholder。 -->
+
+	<br>
+	<template v-if="loginType === 'username'">
+		<label>Username</label>
+		<input placeholder="Enter your username... key" key="username-input">
+	</template>
+	<template v-else>
+		<label>Email&emsp;</label>
+		<input placeholder="Enter your email address...key" key="email-input">
+	</template>
+	<!-- 上面的代码在每次切换时，输入框<input>都将被重新渲染。注意，<label> 元素仍然会被高效地复用，因为它们没有添加 key 属性。 -->
+
+	<br><button @click="toggleFun">Toggle login type</button>
+</div>
+<script type="text/javascript">
+	var demo4 = new Vue({
+		el: '#demo4',
+		data: {
+			loginType: 'username'
+		},
+		methods:{
+			toggleFun: function() {
+				this.loginType = this.loginType === 'username' ? 'email' : 'username';
+			}
+		}
+	})
+</script>
+<hr>
+<!-- 5 v-show : 不管显示与否，v-show的元素都会渲染保留在DOM中。v-show 只是简单地切换元素的 CSS 属性 display。-->
+<!-- 注意：v-show 不支持 <template> 元素，也不支持 v-else。 -->
+<div id="demo5">
+	<!-- 应用在单个元素上 -->
+	<h1 v-show="ok">YES</h1>
+</div>
+<script type="text/javascript">
+	var demo1 = new Vue({
+		el: '#demo5',
+		data: {
+			ok: true,
+		}
+	})
+</script>
+
+
+<!-- 6 v-if和v-show的比较 -->
+<!-- 
+（1）v-if   如果在初始渲染时条件为假，则什么也不做，—直到条件第一次变为真时，才会开始渲染条件块。
+     v-show 不管初始条件是什么，元素总是会被渲染，并且只是简单地基于 CSS 进行切换。
+     可以说，v-if 才是“真正”的条件渲染，因为它会确保在切换过程中条件块内的事件监听器和子组件适当地被销毁和重建。
+（2）v-if   有更高的切换开销
+     v-show 有更高的初始渲染开销。
+     因此，如果需要非常频繁地切换，则使用 v-show 较好；如果在运行时条件很少改变，则使用 v-if 较好。 -->
+
+
+
+</body>
+</html>

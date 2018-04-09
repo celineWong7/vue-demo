@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>类选择器与内联样式</title>
+	<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+	<style type="text/css">
+		.font-yellow {
+			color: yellow;
+		}
+		.has-border {
+			width: 100px;
+			height: 100px;
+			border: 1px solid;
+		}
+		.active {
+			background-color: #d8d8d8;
+		}
+		.text-danger {
+			color: red;
+		}
+
+	</style>
+</head>
+<body>
+<!-- class和style的数据绑定有三种：字符串、对象语法、数组语法 -->
+<!-- 注意：再书写形式上，CSS属性名/class类选择器名 可以用驼峰式 (camelCase) 或短横线分隔 (kebab-case，记得用单引号括起来)  -->
+
+<!-- 一、 b绑定类选择器 v-bind:class -->
+<!-- 1 字符串 -->
+<div id="demo0">
+	<div v-bind:class="fontColor">div0</div>
+</div>
+<script type="text/javascript">
+	var demo0 = new Vue({
+		el: '#demo0',
+		data: {
+			fontColor: 'font-yellow'
+		}
+	})
+</script>
+
+<hr>
+<!-- 2 对象语法 -->
+<div id="demo1">
+	<div v-bind:class="{ active: isActive }">div1</div> <!-- active 这个 class 存在与否将取决于数据属性 isActive 的 truthiness -->
+	<div class="has-border" v-bind:class="{ active: isActive, 'text-danger': hasError}">div2</div> <!-- 可以在对象中传入更多属性来动态切换多个 class -->
+	<div v-bind:class="classObj">div3</div> <!-- 数据对象可以写在实例的data中 -->
+	<div v-bind:class="classComputed">div4</div><!-- 可以绑定一个返回对象的计算属性 -->
+</div>
+<script type="text/javascript">
+	var demo1 = new Vue({
+		el: '#demo1',
+		data: {
+			isActive: true,
+			hasError: true,
+			classObj: {
+				active: true,
+				'text-danger': false
+			},
+			error:null
+		},
+		computed: {
+			classComputed: function(){
+				return{
+					active: this.isActive && !this.error,
+					'text-danger': this.error && this.error.type == 'fatal'
+				}
+			}
+		}
+	})
+</script>
+
+<hr>
+<!-- 3 数组语法 -->
+<div id="demo2">
+	<div v-bind:class="[activeClass, errorClass]">div21</div> <!-- 以数组方式应用一个class列表 -->
+	<div v-bind:class="[isActive ? activeClass : '', errorClass]">div22</div><!-- errorClass始终存在，但是只有在 isActive 是 truthy（注意不是true）时才有 activeClass。 -->
+	<div v-bind:class="[{ active: isActive }, errorClass]">div23</div> <!-- 采用数组语法中使用对象语法，来简化上面div22的条件切换class -->
+</div>
+<script type="text/javascript">
+	var demo2 = new Vue({
+		el: '#demo2',
+		data: {
+			activeClass: 'active',
+			errorClass: 'text-danger',
+			isActive: false
+		}
+	})
+</script>
+
+<hr>
+<!-- 4 用在组件上 -->
+<div id="demo3">
+	<my-div v-bind:class="{active: isActive}"></my-div>	<!-- (3) 创建组件实例 -->
+</div>
+<script type="text/javascript">
+	// (1) 注册新组件
+	Vue.component('my-div',{
+		template: '<div class="static">my div.</div>'
+	})
+
+	// (2) 创建根实例
+	var demo3 = new Vue({
+		el: '#demo3',
+		data:{
+			isActive:true
+		}
+	})
+</script>
+
+
+<!-- 二、绑定内联样式 v-bind:style -->
+<!-- 内联样式style同上面的类选择器class 类似，同样有：字符串、对象语法、数组语法 -->
+<div id="demo5">
+	<!-- <div v-bind:style="color:colorGreen">div green</div> -->   <!-- QUESTION 该语句会导致#demo5消失 -->
+	<div v-bind:style="{ color:  activeColor, fontSize: fontSize + 'px' }">div51</div>
+	<div v-bind:style="styleObj">div52</div><!-- 直接绑定到一个样式对象通常更好，让模板更清晰 -->
+
+	<div v-bind:style="[baseStyles, otherStyles]">div53 array</div> <!-- 数组语法 -->
+</div>
+<script type="text/javascript">
+	var demo5 = new Vue({
+		el: '#demo5',
+		data: {
+			colorGreen: "green",
+			activeColor: "red",
+			fontSize: 30,
+			styleObj: {
+				color: 'blue',
+				fontSize: '16px'
+			},
+			baseStyles: {
+				color: 'pink',
+				fontSize: '18px'
+
+			},
+			otherStyles: {				
+				width: '200px',
+				height: '100px',
+				border: '1px solid orange',
+				'background-color': 'rgba(123,123,123,0.6)'
+			}
+		}
+	})
+</script>
+
+<!-- 补充说明：1、自动添加前缀：当 v-bind:style 使用需要添加浏览器引擎前缀的 CSS 属性时，如 transform，Vue.js 会自动侦测并添加相应的前缀。 -->
+<!-- 2、从 2.3.0 起你可以为 style 绑定中的属性提供一个包含多个值的数组，常用于提供多个带前缀的值， -->
+<!-- 这样写只会渲染数组中最后一个被浏览器支持的值。在本例中，如果浏览器支持不带浏览器前缀的 flexbox，那么就只会渲染 display: flex。例如： -->
+<div id="demo6" :style="{ display: ['-webkit-box', '-ms-flexbox', 'flex'] }"></div>
+<script type="text/javascript">
+	var demo6 = new Vue({
+		el: '#demo6'
+	})
+</script>
+
+</body>
+</html>
