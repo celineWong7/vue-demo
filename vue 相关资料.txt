@@ -16,3 +16,13 @@ vue设计可以对应的ui框架
 
 https://preview.pro.ant.design/#/dashboard/analysis
 蚂蚁金服 制作的 react相关的ui框架
+
+
+
+https://blog.csdn.net/sinat_17775997/article/details/60580683
+Vue相关开源项目库汇总 : 很清晰的给出了对应的github链接
+
+
+
+https://www.cnblogs.com/ziyunfei/p/5545439.html
+passive 的事件监听器

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>数组的变异和非变异方法</title>
+	<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+</head>
+<body>
+<!-- 1 数组的操作方法分为两种： -->
+<!--   1）变异方法 ：使用之后，会改变原始数组。比如：push() / pop() / shift() / unshift() / splice() / sort() / reverse() -->
+<!--   2）非变异方法 ：使用之后不会改变原始数组，而是返回一个新数组。比如：filter() / concat() / slice() -->
+
+<!-- 变异方法因为改变了原始数组，所以也会触发视图更新。
+     但使用非变异方法，如果也想用新数组更新视图的话，可以采用新数组替换旧数组（即把调用返回值赋值给旧数组）。 -->
+<ul id="demo1">
+	<li v-for="item in items">
+		{{ item }}
+	</li>
+	<button @click="pushItem">使用push方法</button>
+	<button @click="sliceItems1">使用slice方法1</button>
+	<button @click="sliceItems2">使用slice方法2:替换数组</button>
+	<button @click="filterItems">使用filter方法:替换数组</button>
+
+</ul>
+<script type="text/javascript">
+	var demo1 = new Vue({
+		el: '#demo1',
+		data: {
+			items: ['I','am','a','coder','.'],
+			newItems: []
+		},
+		methods: {
+			pushItem: function(){
+				this.items.push("push")
+			},
+			sliceItems1: function(){
+				this.newItems = this.items.slice(0,2)
+				// 视图（页面）上不会有变化，但此时在控制台输出   demo1.newItems 可以得到 ['I','am']
+			},
+			sliceItems2: function(){
+				this.items = this.items.slice(0,2)
+				// 视图（页面）会有变化
+			},
+			filterItems: function(){
+				this.items = this.items.filter(function(a) {
+					return a.match(/a/);
+				})
+				// 视图（页面）会有变化
+			}
+		}
+	})
+</script>
+<hr>
+
+
+
+
+
+
+
+
+</body>
+</html>

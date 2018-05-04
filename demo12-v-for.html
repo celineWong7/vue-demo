@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>列表渲染 v-for</title>
+	<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+</head>
+<body>
+<!-- 1 v-for 遍历数组： 使用item in items形式的语法，其中item是数组元素迭代别名，items是源数据数组 -->
+<ul id="demo1">
+	<li v-for="item in items">
+		{{ item.msg }}
+	</li>
+	<hr>
+	<!-- 第二参数 index 是可选的，表示当前项的索引 -->
+	<li v-for="(item, index) in items">
+		{{ index }} - {{ item.msg }}
+	</li>
+	<hr>
+	<!-- 也可以用 of 替代 in 作为分隔符，也许 of 会更接近 JavaScript 迭代器的语法 -->
+	<li v-for="item of items">
+		{{ item.msg }}
+	</li>
+</ul>
+<script type="text/javascript">
+	var demo1 = new Vue({
+		el: '#demo1',
+		data: {
+			items: [
+			{msg: "Hello!"},
+			{msg: "Hi~"}
+			]
+		}
+	})
+</script>
+<hr>
+
+<!-- 2 v-for 遍历对象： 使用value in object形式的语法，其中value是对象值的别称，object是源数据对象 -->
+<ul id="demo2">
+	<li v-for="value in object">
+		{{ value }}
+	</li>
+	<hr>
+	<!-- 第二参数 key 是可选的，表示当前项的键名 -->
+	<li v-for="(value, key) in object">
+		{{ key }} ： {{ value }}
+	</li>
+	<hr>
+	<!-- 第三参数 index 是可选的，表示当前项的索引 -->
+	<li v-for="(value, key, index) in object">
+		{{ index }} - {{ key }} ： {{ value }}
+	</li>
+	<!-- 注意：在遍历对象时，是按 Object.keys() 的结果遍历，但是不能保证它的结果在不同的 JavaScript 引擎下是一致的。 -->
+</ul>
+<script type="text/javascript">
+	var demo2 = new Vue({
+		el: '#demo2',
+		data: {
+			object: {
+				firstName: 'Celine',
+				lastName: 'Wang',
+				age: '20'
+			}
+		}
+	})
+</script>
+<hr>
+
+<!-- 3 key : 需要 v-bind 来绑定动态之。尽量在使用 v-for 时提供 key。 -->
+<!--   文档说明提及，v-for 再更新一集渲染过的元素列表时，会“就地复用”，
+       也就是说，如果数据项的顺序被改变了，页面的DOM元素并不会跟着改变，而是简单复用已经渲染的元素（这里要小心特定索引值）。 -->
+  <!-- 而当我们希望Vue能跟踪每个节点的身份，重用（重排）现有元素时候，就需要给每一个项提供一个唯一的key属性。 -->
+
+<!-- 然而。。。 -->
+<!-- Q1 我并没能构建出相应的示例。尝试过再控制台，通过 demo3.items.sort() 的方式改变数据，但页面依旧能安装排序后显示，可能还不是真正的打乱原有数组顺序吧。。 -->
+<!-- Q2 然后绑定的key，不知道是隐形的，反正在浏览器页面的标签里，没有看到该属性。。 -->
+<ul id="demo3">
+	<li v-for="item in items" :key="item.id" >
+		{{ item }}
+	</li>
+</ul>
+<script type="text/javascript">
+	var demo3 = new Vue({
+		el: '#demo3',
+		data: {
+			items:['I','am','a','coder','.']
+		}
+	})
+</script>
+
+
+
+
+
+
+</body>
+</html>

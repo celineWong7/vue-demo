@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>vue的引入，及常见操作</title>
+<!--1 引入vue -->
+	<!-- （1） 开发环境版本，包含了用帮助的命令行警告 -->
+	<!-- <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script> -->
+
+	<!-- （2） 生产环境版本，优化了尺寸和速度 -->
+	<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+</head>
+<body>
+<!--2 常见的vue指令 -->
+
+<!-- 文本插值：使用双花括号 -->
+	<div id="app">{{ message }}</div>
+	<script>
+	/** app 是一个Vue实例
+	  * el 指定要绑定的元素
+	  * data 指定相关数据 */
+		var app = new Vue({
+			el: '#app',
+			data: {
+				message: 'Hello World!'
+			}
+		})
+	</script>
+
+<!-- 绑定元素特性：使用v-bind -->
+	<div id="app-2" v-bind:title="message">
+		<span>HOVER ME</span>
+	</div>
+	<script>
+		var app2 = new Vue({
+				el: '#app-2',
+				data: {
+					message:'页面加载于' + new Date().toLocaleString()
+				}
+			})	
+	</script>
+
+
+<!-- 条件控制：使用v-if -->
+	<div id="app-3">
+		<p v-if="seen">Now, you see.</p>
+	</div>
+	<script>
+		var app3 = new Vue({
+				el: '#app-3',
+				data: {
+					seen: true
+				}
+			})	
+	</script>
+
+<!-- 循环控制：使用v-for -->
+	<div id="app-4">
+		<ol>
+			<li v-for="todo in todos">{{ todo }}</li>
+		</ol>
+	</div>
+	<script>
+		var app4 = new Vue({
+			el: '#app-4',
+			data: {
+				todos:['learn HTML', 'learn JS', 'learn VUE']
+			}
+		})	
+	</script>
+
+<!-- 事件监听器：使用v-on -->
+	<div id="app-5">
+		<p>{{ message }}</p>
+		<button v-on:click="reverseMessage">clickme!surprise!</button>
+	</div>
+	<script>
+		var app5 = new Vue({
+			el: '#app-5',
+			data: {
+				message: 'Hello World!'
+			},
+			methods: {
+				reverseMessage: function () {
+					this.message = this.message.split('').reverse().join('');
+				}
+			}
+		})	
+	</script>
+
+<!-- 表单的双向数据绑定：使用v-model -->
+	<div id="app-6">
+		<p>{{ message }}</p>
+		<input v-model="message" type="" name="">
+	</div>
+	<script>
+		var app6 = new Vue({
+			el: '#app-6',
+			data: {
+				message: 'Hi~~~'
+			}
+		})
+	</script>
+
+
+</body>
+</html>

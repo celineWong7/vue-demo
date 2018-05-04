@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>数组和对象的更新检测注意事项</title>
+	<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+</head>
+<body>
+<!-- 1 Vue 不能检测以下变动的数组： -->
+<!--   1）利用索引直接设置一个项时，例如：vm.items[indexOfItem] = newValue -->
+<!--   2）修改数组的长度时，例如：vm.items.length = newLength -->
+<ul id="demo1">
+	<li v-for="item in items">
+		{{ item }}
+	</li>
+	<button @click="assignFun">assignment</button><br>
+	<button @click="setFun">Vueset</button><br>
+	<button @click="spliceFun">arraySplice</button>
+</ul>
+<script type="text/javascript">
+	var demo1 = new Vue({
+		el: '#demo1',
+		data: {
+			items: ['I','am','a','coder','.'],
+		},
+		methods: { // this 用 demo1 替代，效果一致  byceline
+			assignFun () {
+				this.items[0] = 'assign' // 不是响应性的，页面没变化
+				this.items.length = 3 // 不是响应性的，页面展示元素不会变成2个
+				// demo1.items[0] = 'assign' 
+				// demo1.items.length = 3 
+				// 注意：如果是在控制台进行输出，上面两条语句都是有效的。也就是说，控制台上运行 demo1.items 会输出 ['I','is']。这说明实际数据有改变，只是页面没有对应响应而已。
+			},
+			/** 如果希望既能改变实际数据，也能触发视图更新，可以考虑一下几种方式： */
+			// 解决 问题1）：可以用 Vue.set() ，或者是数组方法 splice()
+			// 语法：Vue.set(demo1.items, indexOfItem, newValue)  
+			//       demo1.$set(demo1.items, indexOfItem, newValue) //  实例方法 vm.$set ，是全局方法 Vue.set 的一个别名
+			//       demo1.items.splice(indexOfItem, 1, newValue) // 其中第二个参数 1 表示删除指定索引上元素（一个）
+			setFun () {
+ 				Vue.set(this.items,1,'set') // 如果已经先执行了assignFun，这里会把assignFun的变化一起更新到视图
+			},
+			spliceFun () {
+				this.items.splice(2, 1, 'splice') // 其中第二个参数 1 表示删除指定索引上元素（一个）
+
+			}
+		}
+	})	
+</script>
+<hr>
+
+<!-- 1 Vue 不能检测对象属性的添加或删除： -->
+<ul id="demo2">
+	<li v-for="value in obj">
+		{{ value }}
+	</li>
+	<button @click="assignFun">assignment</button><br>
+</ul>
+<script type="text/javascript">
+	var demo2 = new Vue({
+		el: '#demo2',
+		data: {
+			obj: {
+				id: '001'
+			}
+		},
+		methods: {
+			assignFun () {
+				this.obj.name = 'wangxl' // 注意：如果是添加新属性，非响应性，视图不更新 byceline
+				// this.obj.id = '002' // 如果是修改旧属性，是响应性，视图更新，并连带更新之前未更新的新属性
+			}
+		}
+	})
+	demo2.obj.sex = 'female' // 不是响应性的，页面没变化
+
+	/** 和数组更新类型的，这里同样也可以采用 */
+	// Vue.set(demo2.obj, 'address', 'Amoy') // Vue的set方法  注意：此处会连带更新之前未更新的新属性。调试时，需要是否注释
+	// demo2.$set(demo2.obj, 'from', 'Fujian') // 同样可以使用 $set 别名
+	
+	/** 若需要对已有对象赋予多个新属性，不要采用 Object.assign() 或 _.extend() */
+	Object.assign(demo2.obj, { // 非响应性，页面没变化
+		age: 20,
+	})
+	
+	// demo2.obj = Object.assign({}, demo2.obj,{ // 响应性，页面变化。
+	// 	favorite: 'Vue'
+	// })
+</script>
+
+
+
+
+
+
+
+
+</body>
+</html>
