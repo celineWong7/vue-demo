@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>组件基础 - 基本示例 和 组件的组织</title>
+<!--1 引入vue -->
+	<!-- （1） 开发环境版本，包含了用帮助的命令行警告 -->
+	<!-- <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script> -->
+
+	<!-- （2） 生产环境版本，优化了尺寸和速度 -->
+	<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+</head>
+<body>
+
+<!--一、 基本示例 -->
+<script>
+// 组件是可复用的 Vue 实例，组件带有名字，比如：'button-counter'
+	Vue.component('button-counter', {
+		// 注意2. 一个组件的 data 选项必须是一个函数。这样才能保证组件复用时，每个实例可以各自维护组件的data对象；
+		// 如果data还是之前`new Vue`时的 `data:{count: 0}` 这种方式，可能会发生多个复用组件的count值互相影响。
+		// （当然此处Vue.component(...data:{count: 0})时，是会直接报错：count is not defined....）
+		data: function() {
+			return {
+				count: 0
+			}
+		},
+		template: '<button v-on:click="count++"> click me : {{ count }}</button>'
+	});
+</script>
+
+<!-- 注意1. 组件并不是直接的自定义元素，它必须放置在通过new Vue创建的根实例中，才能生效 -->
+<!-- （1）直接暴露在html中并不生效，也不报错 -->
+<button-counter></button-counter>
+<button-counter></button-counter>
+
+<!-- （2）创建一个demo1实例， 把<button-counter>作为自定义元素使用。-->
+<div id="demo1" style="background:pink;">
+  <button-counter></button-counter>
+  <button-counter></button-counter>
+  <button-counter></button-counter>
+  <!-- 组件可以复用 ，且会各自独立维护它的count（点击按钮，count会各自递增）。-->
+  <!-- 这是因为每用一次组件，就会有一个它的新实例被创建。 -->
+</div>
+
+<script>
+	new Vue({ el: '#demo1' });
+</script>
+<!-- 注意：组件也是Vue实例，所以和`new Vue`一样接收相同选项，可以有data、computed、watch、methods 以及生命周期钩子等。
+但没有el选项（用来指定要实例化的元素id项）。 -->
+
+
+<!-- 二、组件的组织 -->
+<img src="../../image/template-tree.png">
+<!-- 如上图示，一个应用可以用一棵嵌套的组件树的形式来组织 -->
+<!-- 为了能在模板中使用，这些组件必须先 **注册** 以便 Vue 能够识别。 -->
+<!-- 有两种组件的注册类型：全局注册和局部注册。 -->
+
+<!-- 1. 全局注册：即 `Vue.component` 方式 -->
+<script>
+	Vue.component('my-component-name', {
+	  // ... options ...
+	})
+</script>
+<!-- 全局注册的组件可以用在其被注册之后的任何 (通过 new Vue) 新创建的 Vue 根实例，也包括其组件树中的所有子组件的模板中（什么是子组件的模板？？？）。 -->
+
+</body>
+</html>

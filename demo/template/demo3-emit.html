@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>3. 组件基础 - 通过$emit监听子组件事件</title>
+<!-- 引入vue -->
+	<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+</head>
+<body>
+
+<!-- 当子组件要和父组件进行沟通时，就要用到emit -->
+
+<!-- 一、一个放大博文字号的案例 -->
+<!-- 我们在`blog-post`组件添加一个按钮，点击按钮放大所有博文的字体。
+这就需要我们在点击子组件的放大按钮时，告诉父组件放大字体。 -->
+
+<div id="demo1">
+	<div :style="{ fontSize: postFontSize + 'em' }">
+		<blog-post 
+		  v-for="post in posts"
+		  v-bind:key="post.id"
+		  v-bind:post="post"
+		  v-on:enlarge-text="postFontSize += 0.1"
+		></blog-post>
+		<!-- 1. 通过 v-on 监听子组件实例的任意事件，此处监听`enlarge-text` -->
+	</div>
+</div>
+<script>
+	Vue.component('blog-post', {
+		props: ['post'],
+		// 2. 通过 v-on:click 安装点击事件：通过调用内建的 $emit 方法，并传入事件名称来触发一个事件。
+		template: '<div class="blog-post">\
+						<h3>{{ post.title }}</h3>\
+						<button v-on:click="$emit(\'enlarge-text\')">Enlarge text</button>\
+				   		<div v-html="post.content">ddd</div>\
+				   	</div>'
+	})
+
+	new Vue({
+		el: '#demo1',
+		data: {
+			posts: [
+				{id: 1, title: '基础入门3', content:'aaaaa3'},
+				{id: 2, title: '打造升级3', content:'bbbbb3'},
+				{id: 3, title: '精通到放弃3', content:'ccccc3'},
+			],
+			postFontSize: 1
+		}
+	})
+</script>
+
+
+<hr>
+<!-- 二、使用事件抛出一个值 -->
+<!-- 上面的例子中，父组件直接监听一个子组件的事件。
+我们还可以让子组件通过$emit跑出一个特定值，让父组件接收后处理。 -->
+
+<!-- 比如：此处案例由子组件决定文本放大多少 -->
+<div id="demo2">
+	<div :style="{ fontSize: postFontSize + 'em' }">
+		<blog-post 
+		  v-for="post in posts"
+		  v-bind:key="post.id"
+		  v-bind:post="post"
+		  v-on:enlarge-text="postFontSize += $event"
+		  v-on:enlarge-text1="onEnlargeText" 
+		  v-on:enlarge-text2="onEnlargeText2" 
+		></blog-post>
+		<!-- 2. 监听事件时，可以通过两种方式访问到抛出的值：
+		（1） 直接通过 $event 访问到被抛出的这个值；
+		（2） 如果监听事件的处理函数是一个方法，比如此处的 `onEnlargeText`，可以在该方法的第一个参数访问到该值。 -->
+		<!-- 注意：如果子组件的$emit()传递多个值，$event 只能访问到第一个值。但可以通过（2），在方法的参数中获取到多个值 -->
+	</div>
+</div>
+<script>
+	Vue.component('blog-post', {
+		props: ['post'],
+		// 1.  $emit 方法的第二个参数提供一个值。
+		template: '<div class="blog-post">\
+						<h3>{{ post.title }}</h3>\
+						<button v-on:click="$emit(\'enlarge-text\', 0.5)">Enlarge 0.5</button>\
+						<button v-on:click="$emit(\'enlarge-text1\', 1)">Enlarge 1</button>\
+						<button v-on:click="$emit(\'enlarge-text2\', 1,2,3)">Enlarge multi</button>\
+				   		<div v-html="post.content">ddd</div>\
+				   	</div>'
+	})
+
+	new Vue({
+		el: '#demo2',
+		data: {
+			posts: [
+				{id: 1, title: '基础入门3', content:'aaaaa3'},
+				{id: 2, title: '打造升级3', content:'bbbbb3'},
+				{id: 3, title: '精通到放弃3', content:'ccccc3'},
+			],
+			postFontSize: 1
+		},
+		methods: {
+			// enlargeAmount 接收的是子组件传递处理的一个值
+			onEnlargeText: function (enlargeAmount) {
+				this.postFontSize += enlargeAmount;
+			},
+			// 若子组件的$emit()传递多个值，可以通过多个参数依次获取到
+			onEnlargeText2: function (arg1,arg2,arg3) {
+				console.log(arg1,arg2,arg3);
+			}
+		}
+	})
+</script>
+</body>
+</html>

@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>v-model 详述与实例：表格计算总金额</title>
+	<title>v-model 和 computed 详述与实例：表格计算总金额</title>
 	<script src="https://cdn.jsdelivr.net/npm/vue"></script>
 </head>
 <body>
 <!-- 1 v-model 是一种语法糖 -->
-<!-- 语法糖：就是代码更为简洁、语义更为流程等一些类称为简写的语法 -->
+<!-- 语法糖：就是代码更为简洁、语义更为流畅等一些类称为简写的语法 -->
 <div id="demo">
 	<p>{{ msg }}</p>
 	<input v-model = "msg"> <!-- line-1 -->
 	<input v-bind:value="msg" v-on:input="msg = $event.target.value"> <!-- line-2 -->
 </div>
-<!-- line-1 是 line-2 的语法糖。其中line-2中的v-on:input... 是绑定了input元素的oninput时间（H5） -->
+<!-- line-1 是 line-2 的语法糖。其中line-2中的v-on:input... 是绑定了input元素的oninput事件（H5） -->
 <!-- 小结：v-model 的 原理：给input元素添加v-model属性时，默认会添加一个value属性，并把oninput事件的实时值变化传递给value属性 -->
 <script type="text/javascript">
 	var vm = new Vue({

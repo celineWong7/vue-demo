@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>事件处理：监听事件 v-on</title>
+	<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+</head>
+<body>
+
+<!-- 1. 直接运行js代码：用 v-on 指令监听 DOM 事件，并在触发时直接运行一些 JavaScript 代码 -->
+<div id="demo1">
+	<button v-on:click="counter += 1">+</button>
+	<span>{{ counter }}</span>
+</div>
+<script>
+	var demo1 = new Vue({
+		el: '#demo1',
+		data: {
+			counter: 0
+		}
+	})
+</script>
+
+
+<!-- 2. 直接绑定方法名：事件处理方法： 用 v-on 接收一个需要调用的方法名称-->
+<div id="demo2">
+	<button v-on:click="sayHello">Hello</button>
+</div>
+<script>
+	var demo2 = new Vue({
+		el: '#demo2',
+		data: {
+			name: 'Celine~'
+		},
+		methods: {
+			sayHello: function (event) {
+				// this 在方法中指向当前 Vue 实例。也就是demo2
+				alert('Hello, ' + this.name + '.')
+
+				// event 是原始DOM事件，拥有其原本具有的属性
+				if (event) {
+					alert(event.target.tagName)
+				}
+			}
+		}
+	})
+
+	// 也可以直接调用方法
+	// demo2.sayHello();
+
+
+</script>
+
+<!-- 3. 调用方法（可以带入不同的参数）：在内联 JavaScript 语句中调用方法-->
+<div id="demo3">
+	<button v-on:click="say('hello')">Hello</button>
+	<button v-on:click="say('hi')">hi</button>
+	<button v-on:click="say2('$event', $event)">use $event</button>
+
+</div>
+<script>
+	var demo3 = new Vue({
+		el: '#demo3',
+		data: {
+			name: 'Celine~'
+		},
+		methods: {
+			say: function (msg) {
+				// this 在方法中指向当前 Vue 实例。也就是demo3
+				alert(msg + ', ' + this.name + '.')
+
+				// console.log(window.event);
+				// 1. 可以使用 window.event || arguments.callee.caller.arguments[0] 来获取event对象。后者针对火狐浏览器
+				var ev = window.event || arguments.callee.caller.arguments[0];
+				if (ev) {
+					alert(ev.target.tagName)
+				}
+
+				// 2. 也可以在调用时，通过特殊变量 $event 传入方法中，具体看say2方法
+			},
+			say2: function(msg,ev){
+				alert(msg + ', ' + this.name + '.')
+				if (ev) {
+					alert(ev.target.tagName)
+				}
+			}
+		}
+	})
+</script>
+
+
+
+</body>
+</html>

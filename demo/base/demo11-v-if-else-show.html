@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>条件渲染</title>
+	<title>条件渲染 v-if</title>
 	<script src="https://cdn.jsdelivr.net/npm/vue"></script>
 </head>
 <body>
@@ -25,7 +25,9 @@
 		}
 	})
 </script>
+
 <hr>
+
 <!-- 2 v-else 必须紧跟在带 v-if 或者 v-else-if 的元素的后面，否则它将不会被识别。 -->
 <div id="demo2">
 	<div v-if="Math.random() > 0.5">Now you see me.</div>
@@ -36,7 +38,9 @@
 		el: '#demo2',
 	})
 </script>
+
 <hr>
+
 <!-- 3 v-else-if 在2.1.0版本中 新增，等同于常规的 else-if 语块 -->
 <div id="demo3">
 	<div v-if="type === 'A'">
@@ -60,7 +64,9 @@
 		}
 	})
 </script>
+
 <hr>
+
 <!-- 4 key属性管理可以复用的元素 -->
 <div id="demo4">
 
@@ -72,7 +78,7 @@
 		<label>Email&emsp;</label>
 		<input placeholder="Enter your email address">
 	</template>
-	<!-- 上面的代码中切换 loginType 将不会清除用户已经输入的内容。因为两个模板使用了相同的元素，<input> 不会被替换掉——仅仅是替换了它的 placeholder。 -->
+	<!-- 上面的代码中切换 loginType 将不会清除用户已经输入的内容。因为两个模板（template）使用了相同的元素，<input> 不会被替换掉——仅仅是替换了它的 placeholder。 -->
 
 	<br>
 	<template v-if="loginType === 'username'">
@@ -100,7 +106,9 @@
 		}
 	})
 </script>
+
 <hr>
+
 <!-- 5 v-show : 不管显示与否，v-show的元素都会渲染保留在DOM中。v-show 只是简单地切换元素的 CSS 属性 display。-->
 <!-- 注意：v-show 不支持 <template> 元素，也不支持 v-else。 -->
 <div id="demo5">
@@ -127,6 +135,6 @@
      因此，如果需要非常频繁地切换，则使用 v-show 较好；如果在运行时条件很少改变，则使用 v-if 较好。 -->
 
 
-
+<!-- 7 不推荐同时使用v-if和v-for ：具体详见demo12末尾-->
 </body>
 </html>

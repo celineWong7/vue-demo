@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>按键修饰符/系统修饰符</title>
+	<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+</head>
+<body>
+
+<!-- 一、按键修饰符 -->
+<!-- 在监听键盘事件时，我们经常需要检查详细的按键。Vue 允许为 v-on 在监听键盘事件时添加按键修饰符： -->
+
+<!-- 例子1：只有在 `key` 是 `Enter` 时调用 `vm.submit()` -->
+<input v-on:keyup.enter="submit">
+
+<!-- 我们可以直接将 KeyboardEvent.key 暴露的任意有效按键名转换为 kebab-case（短横线命名） 来作为修饰符。 -->
+
+<input v-on:keyup.page-down="onPageDown">
+<!-- 在上述示例中，处理函数只会在 $event.key 等于 PageDown 时被调用。 -->
+
+
+<!-- 按键码 keyCode：已放弃。 -->
+<input v-on:keyup.13="submit">
+<!-- keyCode 的事件用法已经被废弃了并可能不会被最新的浏览器支持。 -->
+
+<!-- Vue提供了绝大多数常用的按键码的别名（可以支持旧浏览器）：.enter .tab .delete（删除和退格） .esc .space .up .down .left .right -->
+<!-- 注意：有一些按键 (.esc 以及所有的方向键) 在 IE9 中有不同的 key 值, 如果想支持 IE9，可以内置的别名应该是首选。 -->
+<!-- 还可以通过全局 config.keyCodes 对象自定义按键修饰符别名： 
+	// 可以使用 `v-on:keyup.f1`
+	Vue.config.keyCodes.f1 = 112
+-->
+
+<!-- 二、（2.2.0 新增）鼠标按钮修饰符： .left .right .middle -->
+<div @click.right="doSomething">Do something</div>
+
+
+
+<!-- 三、（2.1.0 新增）系统修饰键 .ctrl .alt .shift .meta -->
+<!-- 系统修饰键可以实现 组合按键，比如 ctrl+A  alt+ctrl+C 等等 -->
+<!-- Alt + C -->
+<input @keyup.alt.67="clear">
+
+<!-- Ctrl + Click -->
+<div @click.ctrl="doSomething">Do something</div>
+<!-- 注意1： 修饰键与常规按键不同，在和 keyup 事件一起用时，事件触发时修饰键必须处于按下状态。换句话说，只有在按住 ctrl 的情况下释放其它按键，才能触发 keyup.ctrl。而单单释放 ctrl 不会触发事件。如果想要这样的行为，请为 ctrl 换用 keyCode：keyup.17。-->
+<!-- 注意2： 以第二个例子（Ctrl + Click）为例，如果同时按下Alt（即Ctrl + Alt + Click）或者Shift（即Ctrl + Shift + Click）也会触发。如果希望只有（Ctrl + Click）才出发，需要添加 .exact修饰符-->
+
+
+
+<!-- 四、（2.5.0 新增）.exact 修饰符：精确控制系统修饰符组合触发的事件-->
+<!-- 即使 Alt 或 Shift 被一同按下时也会触发 -->
+<button @click.ctrl="onClick">A</button>
+
+<!-- 有且只有 Ctrl 被按下的时候才触发 -->
+<button @click.ctrl.exact="onCtrlClick">A</button>
+
+<!-- 没有任何系统修饰符被按下的时候才触发 -->
+<button @click.exact="onClick">A</button>
+
+
+
+
+</body>
+</html>

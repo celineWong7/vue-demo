@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>一个组件的v-for（todolist的雏形案例：父组件向子组件传值 props）</title>
+	<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+</head>
+<body>
+<!-- 此demo是一个小todolist的雏形，包含了父组件向子组件传值（props），子组件触发父组件事件（$emit）。是一个比较经典的案例。 -->
+
+<!-- 在自定义组件里，可以像任何普通元素一样用 v-for 。 -->
+<!-- 2.2.0+ 的版本里，当在组件中使用 v-for 时，key 现在是必须的。 -->
+<!-- 注意：任何数据都不会被自动传递到组件里，因为组件有自己独立的作用域。为了把迭代数据传递到组件里，要用 props -->
+<my-component v-for="item in items" :key="item.id"></my-component>
+
+
+<!-- todoList 案例-->
+<div id="todo-list">
+	<!-- .prevent是事件修饰符：提交事件不再重载页面 -->
+	<form v-on:submit.prevent="addNewTodo">
+		<label for="new-todo">Add a todo</label>
+		<input 
+			v-model="newTodoText"
+			id="new-todo"
+			placeholder="E.g. sing a song." 
+		>
+		<button>Add</button>
+		
+	</form>
+	<ul>
+	<!-- 这里采用 is="todo-item" 属性 方式来引入 todo-item 组件。这样做实现的效果与 <todo-item> 相同，而且能避开一些潜在的浏览器解析错误（在 <ul> 元素内只有 <li> 元素会被看作有效内容）。这种做法在使用 DOM 模板时是十分必要的。 -->
+		<li
+			is="todo-item"
+			v-for="(todo, index) in todos"
+			v-bind:key="todo.id"
+			v-bind:title="todo.title"
+			v-on:remove="todos.splice(index, 1)"
+		></li>
+		<!-- 上面 v-bind:title 作用是：通过title属性，外层数据 todo.title 带入到组件todo-item中去。在组件todo-item的声明中会设置一个props来存储title属性。 -->
+	</ul>
+	
+</div>
+<script>
+	Vue.component('todo-item', {
+		template: '\
+		  <li>\
+		    {{ title }}\
+		    <button v-on:click="$emit(\'remove\')">Remove</button>\
+		  </li>\
+		',
+		props: ['title']
+	})
+	// 上面代码中的 $emit('remove') 意思是触发 remove 事件。用以子组件触发父组件的自定义事件
+	// Question: 让我比较困惑的是，在上面的 v-for="(todo, index) in todos" 中，循环渲染了多个li元素，都有remove事件。但目前$emit('remove')好像只触发当前li元素
+
+	new Vue({
+		el: '#todo-list',
+		data: {
+			newTodoText: '',
+			todos:[
+				{
+					id: 1,
+					title: 'wash the vegetables.'
+				},
+				{
+					id: 2,
+					title: 'cut the vegetables.'
+				},
+				{
+					id: 3,
+					title: 'pool oil on the pan.'
+				}
+			],
+			nextTodoId: 4
+		},
+		methods: {
+			addNewTodo: function () {
+				this.todos.push({
+					id: this.nextTodoId++,
+					title: this.newTodoText
+				})
+				this.newTodoText = ''
+			}
+		}
+	})
+</script>
+
+
+
+
+</body>
+</html>

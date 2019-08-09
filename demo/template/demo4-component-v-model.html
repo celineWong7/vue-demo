@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>4. 组件基础 - 在组件上使用v-model</title>
+	<script src="https://cdn.jsdelivr.net/npm/vue"></script><!-- 引入vue -->
+</head>
+<body>
+
+<!-- 一、表单元素的v-model -->
+<!-- 之前我们在表单元素认识v-model，它可以实现双向数据绑定。 -->
+<!-- 通过一个例子来回顾下： -->
+<div id="demo1">
+	<input v-model="searchText">
+	<!-- 等价于 -->
+	<input
+	  v-bind:value="searchText"
+	  v-on:input="searchText = $event.target.value"
+	>
+	<p>{{ searchText }}</p>
+</div>
+<script>
+	new Vue({
+		el: "#demo1",
+		data: {
+			searchText: ''
+		}
+	})
+</script>
+
+<hr>
+
+
+<!-- 二、未使用v-model，实现组件的双向数据绑定 -->
+<!-- 反向思考下，所以组件上的双向数据绑定（未使用v-model时）应该如下 -->
+<div id="demo2">
+	<custom-input
+	  v-bind:value="searchText"
+	  v-on:input="searchText = $event"
+	></custom-input>
+	<p>custom-input: {{ searchText }}</p>
+</div>
+<!-- 为了让它正常工作，这个组件内的 <input> 必须：
+1. 将其 value 特性绑定到一个名叫 value 的 prop 上
+2. 在其 input 事件被触发时，将新的值通过自定义的 input 事件抛出 
+即，既要父组件传值给子组件（props），又要子组件将新值抛出给父组件（emit）
+-->
+<script>
+	Vue.component('custom-input', {
+		props: ['value'],
+		template: '<input\
+				      v-bind:value="value"\
+				      v-on:input="$emit(\'input\', $event.target.value)"\
+				    >'
+	});
+
+	new Vue({
+		el: "#demo2",
+		data: {
+			searchText: ''
+		}
+	})
+</script>
+
+<hr>
+
+<!-- 三、组件的v-model -->
+<!-- 通过demo2，我们替换上v-model。
+注意：注册组件时，同样要注意props和$emit的设置
+ -->
+<div id="demo3">
+	<custom-input v-model="searchText"></custom-input>
+	<p>custom-input（v-model）: {{ searchText }}</p>
+</div>
+<script>
+	// props和$emit的设置是必要的
+	Vue.component('custom-input', {
+		props: ['value'],
+		template: '<input\
+				      v-bind:value="value"\
+				      v-on:input="$emit(\'input\', $event.target.value)"\
+				    >'
+	});
+
+	new Vue({
+		el: "#demo3",
+		data: {
+			searchText: ''
+		}
+	})
+</script>
+
+
+
+</body>
+</html>

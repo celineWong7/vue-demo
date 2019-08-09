@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>5. 组件基础 - 通过插槽分发内容</title>
+	<script src="https://cdn.jsdelivr.net/npm/vue"></script><!-- 引入vue -->
+</head>
+<body>
+
+<!-- 我们希望像HTML元素一样，可以在标签中间传递内容，比如下面`alert-box` 
+按照以往注册插件的方式，我们无处安放'It's broken.'内容。
+这时候我们可以借助插槽<slot></slot>，在注册组件时提前占位。
+-->
+<div id="demo1">
+	<alert-box>It's broken.</alert-box>
+</div>
+<script>
+
+	Vue.component('alert-box', {
+		props: ['value'],
+		template: '<div>\
+					  <strong>Error: </strong>\
+					  <slot></slot>\
+					</div>'
+	});
+
+	new Vue({
+		el: "#demo1",
+	})
+</script>
+
+
+
+</body>
+</html>

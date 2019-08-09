@@ -26,10 +26,12 @@
 			assignFun () {
 				this.items[0] = 'assign' // 不是响应性的，页面没变化
 				this.items.length = 3 // 不是响应性的，页面展示元素不会变成2个
+
 				// demo1.items[0] = 'assign' 
 				// demo1.items.length = 3 
 				// 注意：如果是在控制台进行输出，上面两条语句都是有效的。也就是说，控制台上运行 demo1.items 会输出 ['I','is']。这说明实际数据有改变，只是页面没有对应响应而已。
 			},
+
 			/** 如果希望既能改变实际数据，也能触发视图更新，可以考虑一下几种方式： */
 			// 解决 问题1）：可以用 Vue.set() ，或者是数组方法 splice()
 			// 语法：Vue.set(demo1.items, indexOfItem, newValue)  
@@ -47,7 +49,7 @@
 </script>
 <hr>
 
-<!-- 1 Vue 不能检测对象属性的添加或删除： -->
+<!-- 2 Vue 不能检测对象属性的添加或删除： -->
 <ul id="demo2">
 	<li v-for="value in obj">
 		{{ value }}
@@ -78,9 +80,10 @@
 	/** 若需要对已有对象赋予多个新属性，不要采用 Object.assign() 或 _.extend() */
 	Object.assign(demo2.obj, { // 非响应性，页面没变化
 		age: 20,
-	})
-	
-	// demo2.obj = Object.assign({}, demo2.obj,{ // 响应性，页面变化。
+	});
+
+	// 可以采用以下方式：用两个对象的属性创建一个新的对象。实现响应性，页面变化。
+	// demo2.obj = Object.assign({}, demo2.obj,{
 	// 	favorite: 'Vue'
 	// })
 </script>

@@ -2,22 +2,15 @@
 <html>
 <head>
 	<title>组件化应用构建</title>
-	<script src="https://cdnCjsdelivr.net/npm/vue"></script>
+	<script src="https://cdn.jsdelivr.net/npm/vue"></script>
 </head>
 <body>
 	<div id="app">
 		<ol>
 		  <!-- 3 创建一个 todo-item 组件的实例 -->
 		  <todo-item></todo-item>
-		</ol>
-	</div>
-
-	<div id="app-2">
-		<ol>
-			<todo-item2 v-for="item in goodsList"
-						v-bind:todo="item"  
-						v-bind:key="item.id">			
-			</todo-item2><!-- todo 对应component的props -->
+		  <todo-item></todo-item>
+		  <todo-item></todo-item>
 		</ol>
 	</div>
 
@@ -29,15 +22,31 @@
 		// 2 创建根实例
 		var app = new Vue({
 			el: '#app'
-		})
+		})	
+	</script>
 
 
-		/** 父作用域将数据传到子组件 */
+	<div id="app-2">
+		<ol>
+			<todo-item2 v-for="item in goodsList"
+						v-bind:todo="item"  
+						v-bind:key="item.id">			
+			</todo-item2><!-- todo 对应component的props -->
+		</ol>
+	</div>
+	<script type="text/javascript">
+
+		// 1 注册（定义）名为 todo-item 的新组件
+		/* 父作用域将数据传到子组件（父组件传值给子组件）:
+			todo-item 组件接受一个"prop"（类似于一个自定义特性），这个 prop 现在命名为 'todo'。
+  		*/
+		 
 		Vue.component('todo-item2',{
 			props: ['todo'],
 			template: '<li>{{ todo.text }}</li>'
 		})
 
+		// 2 创建根实例
 		var app2 = new Vue({
 			el: '#app-2',
 			data: {

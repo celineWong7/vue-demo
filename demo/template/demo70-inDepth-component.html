@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>1. 深入了解组件 - 组件注册</title>
+	<script src="https://cdn.jsdelivr.net/npm/vue"></script><!-- 引入vue -->
+</head>
+<body>
+<!-- 一、组件名 -->
+
+<!-- 定义组件名的方式有两种： -->
+<!-- 1. 短横线分隔命名 kebab-case -->
+<script type="text/javascript">
+	Vue.component('my-component-name', { /* ... */ })
+</script>
+<!-- 注意：当使用 kebab-case (短横线分隔命名) 定义一个组件时，在引用这个自定义元素时必须使用 kebab-case -->
+<my-component-name></my-component-name>
+
+<!-- 2. 首字母大写命名 PascalCase -->
+<script type="text/javascript">
+	Vue.component('MyComponentName', { /* ... */ })
+</script>
+<!-- PascalCase (首字母大写命名) 定义一个组件时，在引用这个自定义元素时两种命名法都可以使用 -->
+<my-component-name></my-component-name>
+<MyComponentName></MyComponentName>
+<!-- 注意：当直接在 DOM (即非字符串的模板或单文件组件) 中使用时只有 kebab-case 是有效的。这是因为， 在W3C 规范中的自定义组件名 (字母全小写且必须包含一个连字符)-->
+<!-- ps：字符串模板指代在js代码中用字符串构建html元素串；单文件组件指的都是.vue文件；DOM指代的就是直接在.html文件的<body>内放置元素。 -->
+
+
+
+<hr>
+
+<!-- 二、组件注册 -->
+<!-- 组件注册分为：全局注册和局部注册 -->
+
+<!-- 1. 全局注册 -->
+<!-- 前面例子中通过`Vue.component` 来创建组件，就是全局注册。
+	即，它们在注册之后可以在任务新创建的Vue根实例（`new Vue`）中使用；
+	且，组件之间也可以相互使用。（？？？后面例子在'component-d'已测试。） -->
+
+<div id="app">
+<!-- 在DOM中，采用首字母大写命名是无效的 -->
+  <componentA></componentA>
+
+<!-- 必须采用短横线命名方式 -->
+  <component-a></component-a>
+  <component-b></component-b>
+  <component-c></component-c>
+
+<!-- component-d里面包含了component-a，可以渲染成功 -->
+  <component-d></component-d>
+</div>
+<hr>
+<div id="app2">
+  <component-a></component-a>
+  <component-d></component-d>
+</div>
+<script type="text/javascript">
+	Vue.component('component-a', { template: '<h1>componentA</h1>' })
+	Vue.component('component-b', { template: '<h2>componentB</h2>' })
+	Vue.component('component-c', { template: '<h3>componentC</h3>' })
+
+	// 此处把组件`component-a`放在组件d中，但是渲染不出来啊啊啊？？？
+	// Vue.component('component-d', { template: '<span>这其实是componentD：</span><component-a>aa</component-a>' })
+	// 因为组件只能有一个根元素啊！SB！给它们包一个外层div啊，蠢货！
+	Vue.component('component-d', { 
+		template: '<div style="color:orange;">\
+					<span>这其实是componentD：</span>\
+					<component-a>aa</component-a>\
+				   </div>' 
+	})
+
+
+	// 任何新创建Vue实例都能使用前面全局注册的组件
+	new Vue({ el: '#app' })
+	new Vue({ el: '#app2' })
+</script>
+
+
+
+<hr>
+<!-- 2. 局部注册 -->
+<!-- 全局注册虽然有随处可取用的方便性，但这也不太好。
+	比如在构建系统中，若是全局注册，即使你不使用这个组件了，但它依旧会包含在最终构建结果中。这就导造成了用户下载的 JavaScript 的无谓的增加。 -->
+
+
+<!-- 2-1 局部注册的方法-->
+<!-- 这时候我们可以通过以下方式进行局部注册：
+（1）普通的 JavaScript 对象来定义组件
+（2）在Vue实例的components 选项中定义你想要使用的组件 -->
+<div id="app3">
+  <!-- 前面的全局注册的组件 component-a，依旧可以直接使用 -->
+  <component-a></component-a>
+
+  <!-- 局部注册的组件 -->
+  <component-m></component-m>
+  <component-n></component-n>
+</div>
+<script type="text/javascript">
+	// 定义组件
+	var ComponentM = { template: '<h1>ComponentM</h1>' };
+	var ComponentN = { template: '<h2>ComponentN</h2>' };
+
+	new Vue({ 
+		el: '#app3',
+		// 设置要使用的组件
+		// 注意components对象中的每个属性：其属性名就是自定义元素的名字，其属性值就是这个组件的选项对象。
+		components: {
+			'component-m': ComponentM,
+			'component-n': ComponentN,
+		}
+	})
+</script>
+
+
+
+<hr>
+<!-- 2-2 局部注册的组件在其子组件中不可用-->
+<!-- 如果希望可用，则需要再定义组件时，在其 `components`选项中设置要使用的子组件。-->
+<!-- 详见下面例子： -->
+<div id="app4">
+  <!-- 局部注册的组件 -->
+  <component-m></component-m>
+  <component-n></component-n>
+
+  <!-- component-k里面直接包含了子组件component-c 和 component-m，
+  component-c渲染成功（以为c是全局注册）但component-m不能成功渲染（因为m是局部注册）。 -->
+  <component-k></component-k>
+
+  <!-- component-l在定义组件ComponentL时，配置了components 属性，所以可以成功渲染component-m -->
+  <component-l></component-l>
+
+</div>
+<script type="text/javascript">
+	// 定义组件
+	var ComponentK = { 
+		template: '<div>\
+					<span>It is K, it include M&C: </span>\
+					<component-m></component-m>\
+					<component-c></component-c>\
+				</div>' 
+	};
+
+	var ComponentL = { 
+		template: '<div>\
+					<span>It is L, it include M: </span>\
+					<component-m></component-m>\
+				   </div>',
+		// 引入子组件ComponentM
+		components: {
+			'component-m': ComponentM
+		}
+	};
+
+
+	new Vue({ 
+		el: '#app4',
+		// 设置要使用的组件
+		// 注意components对象中的每个属性：其属性名就是自定义元素的名字，其属性值就是这个组件的选项对象。
+		components: {
+			'component-m': ComponentM,
+			'component-n': ComponentN,
+			'component-k': ComponentK,
+			'component-l': ComponentL,
+		}
+	})
+</script>
+
+
+
+<script>
+// 2-3 通过Babel和 webpack 使用 ES2015 模块：采用import、export语法 引入子组件
+// 此处无法直接运行，会报错：Uncaught SyntaxError: Unexpected identifier
+	import ComponentA from './ComponentA.vue'
+
+	export default {
+	  components: {
+	    ComponentA
+	  },
+	  // ...
+	}
+</script>
+
+</body>
+</html>

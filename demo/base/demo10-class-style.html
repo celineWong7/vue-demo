@@ -23,9 +23,9 @@
 </head>
 <body>
 <!-- class和style的数据绑定有三种：字符串、对象语法、数组语法 -->
-<!-- 注意：再书写形式上，CSS属性名/class类选择器名 可以用驼峰式 (camelCase) 或短横线分隔 (kebab-case，记得用单引号括起来)  -->
+<!-- 注意：在书写形式上，CSS属性名/class类选择器名 可以用驼峰式 (camelCase) 或短横线分隔 (kebab-case，记得用单引号括起来)  -->
 
-<!-- 一、 b绑定类选择器 v-bind:class -->
+<!-- 一、 绑定类选择器 v-bind:class -->
 <!-- 1 字符串 -->
 <div id="demo0">
 	<div v-bind:class="fontColor">div0</div>
@@ -72,9 +72,10 @@
 
 <hr>
 <!-- 3 数组语法 -->
+<!-- 注意：数组语法里的数组元素都是data对象里面的key，而不是选择器名称，（不过该key对应的value是选择器名称） -->
 <div id="demo2">
 	<div v-bind:class="[activeClass, errorClass]">div21</div> <!-- 以数组方式应用一个class列表 -->
-	<div v-bind:class="[isActive ? activeClass : '', errorClass]">div22</div><!-- errorClass始终存在，但是只有在 isActive 是 truthy（注意不是true）时才有 activeClass。 -->
+	<div v-bind:class="[isActive ? activeClass : '', errorClass]">div22</div><!-- errorClass始终存在，但是只有在 isActive 是 真值truthy（注意不单纯指布尔值true，而是指在布尔转换后的值为真的值）时才有 activeClass。 -->
 	<div v-bind:class="[{ active: isActive }, errorClass]">div23</div> <!-- 采用数组语法中使用对象语法，来简化上面div22的条件切换class -->
 </div>
 <script type="text/javascript">

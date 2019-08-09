@@ -7,7 +7,7 @@
 <body>
 <!-- 计算属性 computed -->
 
-<!-- 1 模板内的表达式，主要用于简单运算的。若是逻辑比较负责，考虑用计算属性computed，详见2 -->
+<!-- 1 模板内的表达式，主要用于简单运算的。若是逻辑比较复杂，考虑用计算属性computed，详见2 -->
 	<div id="app">1
   		{{ message.split('').reverse().join('') }}
 	</div>
@@ -33,6 +33,8 @@
 	<hr>
 
 <!-- 4 计算属性 computed VS 侦听属性 watch -->
+<!-- 当我们有一些数据需要随着其它数据变动而变动时，我们很容易滥用 watch -->
+<!-- 通常更好的做法是使用计算属性而不是命令式的 watch 回调。 -->
 	<div id="app-4">4
 		<p>fullName: {{ fullName }}</p>
 	</div>
@@ -124,9 +126,12 @@
 			},
 			computed: {
 				fullName: {
-					get: function(){ // getter
+					// getter
+					get: function(){
 						return this.firstName + ' ' + this.lastName
 					},
+
+					// setter
 					set: function(newVal){
 						var names = newVal.split(' ')
 						this.firstName = names[0]

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>2. 组件基础 - 通过prop向子组件传递数据</title>
+<!-- 引入vue -->
+	<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+</head>
+<body>
+
+<!-- 一、一个通过props传递博文标题的例子 -->
+<div id="demo1">
+	<!-- 3. 在组件上绑定一个`title`属性 -->
+	<blog-post 
+	  v-for="post in posts"
+	  v-bind:key="post.id"
+	  v-bind:title="post.title"
+	></blog-post>
+</div>
+<script>
+	// 1. 注册一个 `blog-post` 的组件
+	Vue.component('blog-post', {
+		// 4. 通过props接收`title`属性
+		props: ['title'],
+		template: '<h3>{{ title }}</h3>'
+	})
+
+	// 2. 创建根实例
+	new Vue({
+		el: '#demo1',
+		data: {
+			posts: [
+				{id: 1, title: '基础入门'},
+				{id: 2, title: '打造升级'},
+				{id: 3, title: '精通到放弃'},
+			]
+		}
+	})
+</script>
+
+<hr>
+<!-- 当构建一个 <blog-post> 组件时，我们的模板包含的东西远不止一个标题，比如还会有正文等 -->
+<!-- 二、 一个比较完成博文组件例子-->
+<!-- 1. 每个组件必须只有一个根元素 -->
+<div id="demo2">
+	<blog-post 
+	  v-for="post in posts"
+	  v-bind:key="post.id"
+	  v-bind:title="post.title"
+	  v-bind:content="post.content"
+	></blog-post>
+</div>
+<script>
+	Vue.component('blog-post', {
+		props: ['title','content'],
+		// 当直接h3、div标签并列时：
+		// 文档说，Vue 会显示一个错误： every component must have a single root element (每个组件必须只有一个根元素)
+		// 但此处，没有报错，只不过不会渲染div标签。
+		// template: '<h3>{{ title }}</h3>\
+		// 		   <div v-html="content">ddd</div>',
+
+		// 我们可以考虑将模板的内容包裹在一个父元素内，比如此处加一个外层的div元素
+		template: '<div>\
+						<h3>{{ title }}</h3>\
+				   		<div v-html="content">ddd</div>\
+				   	</div>'
+	})
+
+	new Vue({
+		el: '#demo2',
+		data: {
+			posts: [
+				{id: 1, title: '基础入门2', content:'aaaaa2'},
+				{id: 2, title: '打造升级2', content:'bbbbb2'},
+				{id: 3, title: '精通到放弃2', content:'ccccc2'},
+			]
+		}
+	})
+</script>
+
+<hr>
+<!-- 2. props可以传递对象 -->
+<div id="demo3">
+	<blog-post 
+	  v-for="post in posts"
+	  v-bind:key="post.id"
+	  v-bind:post="post"
+	></blog-post>
+</div>
+<script>
+	Vue.component('blog-post', {
+		props: ['post'],
+		template: '<div class="blog-post">\
+						<h3>{{ post.title }}</h3>\
+				   		<div v-html="post.content">ddd</div>\
+				   	</div>'
+	})
+
+	new Vue({
+		el: '#demo3',
+		data: {
+			posts: [
+				{id: 1, title: '基础入门3', content:'aaaaa3'},
+				{id: 1, title: '打造升级3', content:'bbbbb3'},
+				{id: 1, title: '精通到放弃3', content:'ccccc3'},
+			]
+		}
+	})
+
+	// 有趣的是，现在不论何时为 post 对象添加一个新的属性，它都会自动地在 <blog-post> 内可用。
+</script>
+</body>
+</html>

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>显示过滤/排序结果</title>
+	<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+</head>
+<body>
+<!-- 想要显示一个数组的过滤（排序副本），但不实际改变（重置）原始数据。 -->
+<!--   1）创建返回过滤或排序数组的计算属性 -->
+<ul id="demo1">
+	<li v-for="n in evenNumbers">{{ n }}</li>
+</ul>
+
+<script type="text/javascript">
+	var demo1 = new Vue({
+		el: '#demo1',
+		data: {
+			numbers: [1, 2, 3, 4, 5],
+		},
+		computed: {
+			evenNumbers: function(){
+				return this.numbers.filter(function(number){
+					return number % 2 === 0;
+				});
+			}
+		}
+	})	
+</script>
+<hr>
+
+<!--   2）在计算属性不适用的情况下 (例如，在嵌套 v-for 循环中) ，可以使用一个 method 方法 -->
+<ul id="demo2">
+	<li v-for="n in even(numbers)">{{ n }}</li>
+</ul>
+<script type="text/javascript">
+	var demo2 = new Vue({
+		el: '#demo2',
+		data: {
+			numbers: [1,2,3,4,5]
+		},
+		methods: {
+			even: function(numbers) {
+				return this.numbers.filter(function(number){
+					return number % 2 === 0;
+				});
+			}
+		}
+	})
+
+</script>
+<hr>
+
+
+<!--   3）v-for 直接取整数 -->
+<div id="demo3">
+	<span v-for="n in 10">{{ n }}</span>
+</div>
+<script type="text/javascript">
+	var demo3 = new Vue({
+		el: '#demo3',
+		data: {}
+			
+	})
+
+</script>
+<hr>
+
+<!--   4）v-for 应用于渲染多个元素<template> -->
+<ul id="demo4">
+	<template v-for="(item, index) in items">
+		<li>第{{ index }}个：</li>
+		<li>{{ item }}</li>
+	</template>
+</ul>
+<script type="text/javascript">
+	var demo4 = new Vue({
+		el: '#demo4',
+		data: {
+			items:['aaa', 'bbb', 'ccc']
+		}		
+	})
+
+</script>
+<hr>
+
+<!--   5）v-for 和 v-if 关联： -->
+<!-- 当两者在同一个节点时，v-for 的优先级比 v-if 更高，也就是说 v-for 循环产生的每一个元素都会进行 v-if判断。案例  v-if="!todo.isComplete"-->
+<!-- 如果你的目的是有条件地跳过循环的执行，那么可以将 v-if 置于外层元素 (或 <template>)上 。案例 <ul v-if="todos.length">-->
+<!-- 以下示例只显示未完成的任务 -->
+<div id="demo5">
+	<ul v-if="todos.length">
+		<li v-for="todo in todos" v-if="!todo.isComplete">
+			{{ todo }}
+		</li>
+	</ul>
+</div>
+
+<script type="text/javascript">
+	var demo5 = new Vue({
+		el: '#demo5',
+		data: {
+			todos:[
+			{
+				id: '001',
+				task: 'do sth 1',
+				isComplete: false
+
+			},
+			{
+				id: '002',
+				task: 'do sth 2',
+				isComplete: true
+
+			},
+			{
+				id: '003',
+				task: 'do sth 3',
+				isComplete: false
+
+			},
+			]
+		}		
+	})
+</script>
+<!-- 注意：不建议同时使用 v-if 和 v-for ,具体详见demo12末尾-->
+
+
+
+
+</body>
+</html>

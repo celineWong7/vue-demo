@@ -2,7 +2,8 @@
 <html>
 <head>
 	<title>Life circle 实例的生命周期</title>
-	<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+	<!-- <script src="https://cdn.jsdelivr.net/npm/vue"></script> -->
+	<script src="https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.js"></script>
 	<style type="text/css">
 		img.cycle {
 			width: 45%;
@@ -20,11 +21,11 @@
 </head>
 <body>
 <h1># 生命周期图示</h1>
-<img class="cycle" src="image/lifecycle.png">
-<img class="cycle" src="image/lifecycle-cn.png">
+<img class="cycle" src="../../image/lifecycle.png">
+<img class="cycle" src="../../image/lifecycle-cn.png">
 <p>* 如果使用构建步骤（比如单文件组件），模块编译将会在此之前执行。</p>
 <h3>### 生命周期图示各个名词含义说明</h3>
-<img src="image/lifecycle-noun.png">
+<img src="../../image/lifecycle-noun.png">
 <p class="warn-tips"><span style="color:red;">来自官方文档的注意：</span><br>
 不要在选项属性或回调上使用<strong>箭头函数</strong>，比如<span> created: () => console.log(this.a)</span> 或 <span>vm.$watch('a', newValue => this.myMethod())</span>。<br>
 因为箭头函数是和父级上下文绑定在一起的，<span>this</span> 不会是如你所预期的 Vue 实例，经常导致 <span>Uncaught TypeError: Cannot read property of undefined</span> 或 <span>Uncaught TypeError: this.myMethod is not a function</span> 之类的错误。</p>
@@ -36,9 +37,13 @@
 <a href="https://segmentfault.com/a/1190000008010666">参考资料：Vue2.0 探索之路——生命周期和钩子函数的一些理解</a>
 
 <script type="text/javascript">
-	var app = new Vue({
-		el: '#app',
+	var vm = new Vue({
+		el: '#app', // 5 注释掉时，手动挂载
 		data: {message: 'Hello Vue~'},
+		// template: "<h1>我是模板标题1</h1>", // 6 有template模板是，会去替换掉#app的html内容
+		// render(h){ 
+		// 	return h('h2','这是render出来的标题2'); // 7 用render函数生成模板
+		// },
 		beforeCreate: function(){
 			console.group('beforeCreate 创建前 =========')
 			console.log('%c%s','color:red','el		:',this.$el) // 1 => undefined
@@ -55,7 +60,7 @@
 		},
 		beforeMount: function(){
 			console.group('beforeMount 挂载前 =========')
-			console.log('%c%s','color:red','el		:',this.$el) // 1 => <div id="app"><p>'Hello Vue~'</p></div>
+			console.log('%c%s','color:red','el		:',this.$el) // 1 => <div id="app"><p>{{ message }}</p></div>
 			console.log('%c%s','color:red','data	:',this.$data) // 1 => {message: 'Hello Vue~'}
 			console.log('%c%s','color:red','message :',this.message) // 1 => 'Hello Vue~'
 
@@ -72,6 +77,8 @@
 			console.log('%c%s','color:red','el		:',this.$el) // 2 => <div id="app"><p>'Celine~'</p></div>
 			console.log('%c%s','color:red','data	:',this.$data) // 2 => {message: 'Celine~'}
 			console.log('%c%s','color:red','message :',this.message) // 2 => 'Celine~'
+			// console.log('%c%s','color:red','#app DOM :',document.getElementById("app")) // 依旧是更新后数据啊
+			// alert('beforeUpdate!!'); // alert阻断好像也没用。 el和data会是空白，message是更新后数据
 
 		},
 		updated: function() {
@@ -79,6 +86,7 @@
 			console.log('%c%s','color:red','el		:',this.$el) // 2 => <div id="app"><p>'Celine~'</p></div>
 			console.log('%c%s','color:red','data	:',this.$data) // 2 => {message: 'Celine~'}
 			console.log('%c%s','color:red','message :',this.message) // 2 => 'Celine~
+			// console.log('%c%s','color:red','#app DOM :',document.getElementById("app")) // 更新后数据
 			
 		},
 		beforeDestroy: function(){
@@ -95,15 +103,19 @@
 			console.log('%c%s','color:red','message :',this.message) // 3 => 'Celine~
 
 		}
-	})
+	});
 
 	// 1 页面直接刷新进来，执行的钩子有 beforeCreate / created / beforeMount / mounted 四个。
-	// 2 在控制台执行  app.message = "Celine~" 后，执行的钩子有 beforeUpdate / updated 两个。
+	// 2 在控制台执行  vm.message = "Celine~" 后，执行的钩子有 beforeUpdate / updated 两个。
 	//   更新前和更新后的，打印数据均是新数据 ？？ 这点和想象的不太一致。
-	// 3 在控制台执行  app.$destroy() 后，执行的钩子有 beforeDestroy / destroyed 两个。
+	// 3 在控制台执行  vm.$destroy() 后，执行的钩子有 beforeDestroy / destroyed 两个。
 	//   销毁前和销毁后，数据依旧存在？？ 这点也和想象的不太一致。不过这个时候再去改变message值，vue不会再响应（也不会去执行beforeUpdate / updated 钩子）
-	// 4  在控制台执行  app.message = "Bye~" ，没有任何钩子有响应。
+	// 4  在控制台执行  vm.message = "Bye~" ，没有任何钩子有响应。
 
+	// 5 手动挂载
+	// vm.$mount('#app');
+	// 6 若有template选项，则会优先渲染template选项内容
+	// 7 若有render方法，则会优先渲染render方法里面的模板内容
 </script>
 </body>
 </html>

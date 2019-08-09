@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>深入响应式原理</title>
+	<!-- 引入vue -->
+	<!-- <script src="https://cdn.jsdelivr.net/npm/vue"></script> -->
+</head>
+<body>
+<!-- 一、 如何追踪变化 -->
+
+<!-- 当把一个普通的 JavaScript 对象传入 Vue 实例作为 data 选项，Vue 将遍历此对象所有的属性，并使用 Object.defineProperty 把这些属性全部转为 getter/setter。
+Object.defineProperty 是 ES5 中一个无法 shim 的特性，这也就是 Vue 不支持 IE8 以及更低版本浏览器的原因。 -->
+
+<!-- 注：（shim特性和polyfill特性两种方式都是为了兼容浏览器，shim 的方式是封装一个新的API，然后在API里通过if-else手段来兼容不同浏览器；而polyfill的方式，是直接通过if-else手段判断是否兼容。相对来说，polyfill方式更尊重标准API，移植性也会比较好） -->
+
+<!-- 1. 何为Object.defineProperty？ -->
+<a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty">更多参考：Object.defineProperty</a>
+<script type="text/javascript">
+	/**
+	 * Object.defineProperty() 
+	 * 用途：该方法会直接在一个对象上定义一个新属性，或者修改一个对象的现有属性， 并返回这个对象。
+	 * 语法：Object.defineProperty(obj, prop, descriptor)
+	 * @param {object} obj 要在其上定义属性的对象。
+	 * @param {string} prop 要定义或修改的属性的名称。
+	 * @param {object} descriptor 将被定义或修改的属性描述符。
+	 * 其中descriptor分为 数据描述符（有属性值的）、存取描述符（由getter-setter函数对描述的属性）
+	 * 数据描述符和存取描述符共同可配置的参数有：
+	 * 		configurable - 可配置性。默认false。为true时，该属性描述符才可改变；该属性才可被删除。
+	 *   	enumerable - 可枚举性。默认false。为true时，该属性才能出现对象枚举属性中（即for...in 或 Object.keys遍历出来）。
+	 *   数据描述符额外还可配置参数有：
+	 *    	value - 属性值。默认undefined。可以是任何有效的 JavaScript 值（数值，对象，函数等）。
+	 *     	writable - 可赋值运算符改变。默认false。为true时，value才能被赋值运算符改变。
+	 *   存取描述符额外还可配置参数有：
+	 *    	get - 一个给属性提供 getter 的方法。默认undefined。当访问该属性时，该方法会被执行，方法执行时没有参数传入，但是会传入this对象（由于继承关系，这里的this并不一定是定义该属性的对象）。
+	 *     	set - 一个给属性提供 setter 的方法。默认undefined。当属性值修改时，触发执行该方法。该方法将接受唯一参数，即该属性新的参数值。
+	 * 
+	 */
+
+
+	 // 案例1 - 数据描述符
+	 var obj= {};
+	 // （0）定义属性
+	 // 定义一个id属性
+	 Object.defineProperty(obj,'id',{value:'001'});// configurable/enumerable/writable, 默认false.
+	 console.log(obj);//{name: "aa"}
+
+	 // 定义一个name属性
+	 Object.defineProperty(obj,'name',{
+	 	configurable: true,
+	 	enumerable:true,
+	 	value: 'celine',
+	 	writable: true
+	 });
+	 console.log(obj); // {name: "celine", id: "001"}
+
+
+	 // （1）可配置性
+	 // 重新配置 id - descriptor
+	// Object.defineProperty(obj,'id',{
+	//  	value: '099',
+	//  	writable: true
+	//  }); // 报错：Uncaught TypeError: Cannot redefine property: id。因为configuration配置为false，不可再次更改descriptor
+	
+	// 重新配置 name - descriptor
+	 Object.defineProperty(obj,'name',{
+	 	configurable: false,
+	 	value: 'shopping',
+	 })
+	 console.log(obj); // {name: "shopping", id: "001"}
+
+
+	 // （2）可赋值性
+	// 通过赋值运算符赋值，因为writable的配置，id不会更改，name会更改
+	obj.id = "009";
+	obj.name = "celine2";
+	console.log(obj);//{name: "celine2", id: "001"}
+
+	// （3）可枚举性
+	for(let p in obj){
+		console.log(p,': ',obj[p]);
+	}//name :  celine2。 只能输出name
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>列表渲染 v-for</title>
+	<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+</head>
+<body>
+<!-- 1 v-for 遍历数组： 使用item in items形式的语法，其中item是数组元素迭代别名，ary/items是源数据数组 -->
+<ul id="demo1">
+	<li v-for="item in ary">
+		{{ item }}
+	</li>
+	<hr>
+	<!-- 第二参数 index 是可选的，表示当前项的索引 -->
+	<li v-for="(item, index) in items">
+		{{ index }} - {{ item.msg }}
+	</li>
+	<hr>
+	<!-- 也可以用 of 替代 in 作为分隔符，也许 of 会更接近 JavaScript 迭代器的语法 -->
+	<li v-for="item of items">
+		{{ item.msg }}
+	</li>
+</ul>
+<script type="text/javascript">
+	var demo1 = new Vue({
+		el: '#demo1',
+		data: {
+			ary:['aaa','bbb'],
+			items: [
+			{msg: "Hello!"},
+			{msg: "Hi~"}
+			]
+		}
+	})
+</script>
+<hr>
+
+<!-- 2 v-for 遍历对象： 使用value in object形式的语法，其中value是对象值的别称，object是源数据对象 -->
+<ul id="demo2">
+	<li v-for="value in object">
+		{{ value }}
+	</li>
+	<hr>
+	<!-- 第二参数 key 是可选的，表示当前项的键名 -->
+	<li v-for="(value, key) in object">
+		{{ key }} ： {{ value }}
+	</li>
+	<hr>
+	<!-- 第三参数 index 是可选的，表示当前项的索引 -->
+	<li v-for="(value, key, index) in object">
+		{{ index }} - {{ key }} ： {{ value }}
+	</li>
+	<!-- 注意：在遍历对象时，是按 Object.keys() 的结果遍历，但是不能保证它的结果在不同的 JavaScript 引擎下是一致的。 -->
+</ul>
+<script type="text/javascript">
+	var demo2 = new Vue({
+		el: '#demo2',
+		data: {
+			object: {
+				firstName: 'Celine',
+				lastName: 'Wang',
+				age: '20'
+			}
+		}
+	})
+</script>
+<hr>
+
+<!-- 3 key : 需要 v-bind 来绑定动态之。尽量在使用 v-for 时提供 key。 -->
+<!--   文档说明提及，v-for 在更新已经渲染过的元素列表时，会“就地复用”，
+       也就是说，如果数据项的顺序被改变了，页面的DOM元素并不会跟着改变，而是简单复用已经渲染的元素（这里要小心特定索引值）。 -->
+  <!-- 而当我们希望Vue能跟踪每个节点的身份，重用（重排）现有元素时候，就需要给每一个项提供一个唯一的key属性。 -->
+<!-- 建议：尽可能在使用 v-for 时提供 key，除非遍历输出的 DOM 内容非常简单，或者是刻意依赖默认行为以获取性能上的提升。 -->
+
+<!-- 然而。。。 -->
+<!-- Q1 我并没能构建出相应的示例。尝试过在控制台，通过 demo3.items.sort() 的方式改变数据，但页面依旧能按照排序后显示，可能还不是真正的打乱原有数组顺序吧。。 -->
+<!-- Q2 然后绑定的key，不知道是隐形的，反正在浏览器页面的标签里，没有看到该属性。。 -->
+<ul id="demo3">
+	<li v-for="item in items" :key="item.id" >
+		{{ item }}
+	</li>
+</ul>
+<script type="text/javascript">
+	var demo3 = new Vue({
+		el: '#demo3',
+		data: {
+			items:['I','am','a','coder','.']
+		}
+	})
+</script>
+<!-- 注意：key 并不与 v-for 特别关联，key 还具有其他用途。比如demo11 - #demo4 ，就用key属性管理可以复用的元素 -->
+
+
+
+<!-- 4 不推荐同时使用 v-if和 v-for ：相关例子在官方文档的风格指南中。（如果同时使用了，v-for 比 v-if 具有更高的优先级）-->
+
+<!-- 会同时使用 v-if 和 v-for 的场景，主要有以下两种：
+1. 过滤列表中的项目。比如：v-for="user in users" v-if="user.isActive"。
+	解决方案：将 users 替换为一个计算属性 (比如 activeUsers)，让其返回过滤后的列表。
+2. 避免渲染本应该被隐藏的列表。比如：v-for="user in users" v-if="shouldShowUsers"。 
+	解决方案：将 v-if 移动至容器元素上 (比如 ul, ol)。-->
+
+<!-- 以第一种场景为例，我们来看下代码执行过程 -->
+<ul id="demo4">
+  <li
+    v-for="user in users"
+    v-if="user.isActive"
+    :key="user.id"
+  >
+    {{ user.name }}
+  </li>
+</ul>
+<!-- 当 Vue 处理指令时，v-for 比 v-if 具有更高的优先级，所以这个模板会经过如下的运算
+this.users.map(function (user) {
+  if (user.isActive) {
+    return user.name
+  }
+})
+因此哪怕我们只渲染出一小部分用户的元素，也得在每次重渲染的时候遍历整个列表，不论活跃用户是否发生了变化。
+ -->
+<script type="text/javascript">
+	var demo4 = new Vue({
+		el: '#demo4',
+		data: {
+			users:[
+				{
+					id: '001',
+					name: 'Celine',
+					isActive: true,
+				},
+				{
+					id: '002',
+					name: 'xiaolin',
+					isActive: true,
+				},
+			]
+		}
+	})
+</script>
+
+<!-- 解决方案 -->
+<!-- 方案优点：
+1. 过滤后的列表只会在 users 数组发生相关变化时才被重新运算，过滤更高效。
+2. 使用 v-for="user in activeUsers" 之后，我们在渲染的时候只遍历活跃用户，渲染更高效。
+3. 解藕渲染层的逻辑，可维护性 (对逻辑的更改和扩展) 更强。 -->
+<ul id="demo42">
+  <li
+    v-for="user in activeUsers"
+    :key="user.id"
+  >
+    {{ user.name }}
+  </li>
+</ul>
+<script type="text/javascript">
+	var demo4 = new Vue({
+		el: '#demo42',
+		data: {
+			users:[
+				{
+					id: '001',
+					name: 'Celine',
+					isActive: true,
+				},
+				{
+					id: '002',
+					name: 'xiaolin',
+					isActive: true,
+				},
+			]
+		},
+		computed: {
+			activeUsers: function() {
+				return this.users.filter(function (user){
+					return user.isActive
+				})
+			}
+		}
+	})
+</script>
+
+
+
+<!-- 同样，第二种场景的处理如下： -->
+<!-- 不好的写法 -->
+<ul>
+  <li
+    v-for="user in users"
+    v-if="shouldShowUsers"
+    :key="user.id"
+  >
+    {{ user.name }}
+  </li>
+</ul>
+
+<!-- 优化后的写法 -->
+<ul v-if="shouldShowUsers">
+  <li
+    v-for="user in users"
+    :key="user.id"
+  >
+    {{ user.name }}
+  </li>
+</ul>
+
+
+</body>
+</html>

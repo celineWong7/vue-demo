@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>2. 深入了解组件 - prop</title>
+	<script src="https://cdn.jsdelivr.net/npm/vue"></script><!-- 引入vue -->
+</head>
+<body>
+
+<!-- 一、Prop的命名（camelCase vs Kebab-case，驼峰写法vs短横线写法）-->
+<!-- 在HTML中，对大小写不敏感。所以在使用DOM模板时，prop名要用kebab-case（短横线写法）。  -->
+<!-- 注意：如果是字符串模板，就不存在这个限制，也就是两种写法都可以。 -->
+<div id="demo1">
+	<!-- postTitle渲染无效。因为会被浏览器解释为小写字符安 posttitle。 -->
+	<blog-post postTitle="hello world!"></blog-post>
+
+	<!-- 短横线写法才能渲染出来 -->
+	<blog-post post-title="hello world!"></blog-post>
+
+</div>
+<script>
+	Vue.component('blog-post', {
+		props: ['postTitle'],
+		template: '<h3>{{ postTitle }}</h3>'
+	})
+
+	new Vue({
+		el: "#demo1"
+	})
+</script>
+
+
+
+<hr>
+<!-- 二、Prop类型 -->
+<script>
+	// 常见的prop类型是字符串数组形式，如下：
+	// props: ['title', 'likes', 'isPublished', 'commentIds', 'author']
+
+	// 实际上，我们还可以为每个prop指定值类型，比如：
+	/*
+	props: {
+	  title: String,
+	  likes: Number,
+	  isPublished: Boolean,
+	  commentIds: Array,
+	  author: Object,
+	  callback: Function,
+	  contactsPromise: Promise // or any other constructor
+	}
+	*/
+	// 这样，当它们遇到错误类型时，浏览器会在控制台进行错误提示。
+	// 具体例子后面会验证。
+</script>
+
+
+<hr>
+<!-- 三、传递静态或动态Prop -->
+<!-- 1. 传入一个字符串 -->
+<div id="demo2">
+	<!-- 给 prop 传入一个静态的值 -->
+	<blog-post post-title="hello world!"></blog-post>
+
+	<!-- 通过 v-bind 动态赋值 -->
+	<blog-post2 v-bind:title="post.title"></blog-post2>
+
+	<!-- 动态赋予一个复杂表达式的值 -->
+	<blog-post2
+	  v-bind:title="post.title + ' by ' + post.author.name"
+	></blog-post2>
+
+</div>
+<script>
+	Vue.component('blog-post', {
+		props: ['postTitle'],
+		template: '<h3>{{ postTitle }}</h3>'
+	})
+
+	Vue.component('blog-post2', {
+		props: ['title'],
+		template: '<h3>{{ title }}</h3>'
+	})
+
+	new Vue({
+		el: "#demo2",
+		data:{
+			post:{
+				title: "post标题",
+				author:{
+					name:"post作者"
+				}
+			}
+		}
+	})
+</script>
+
+<hr>
+<!-- 之前的例子都是传入字符串类型，实际上任何类型的值都可以传给prop。 -->
+<!-- 2. 传入一个数字 -->
+<div id="demo3">
+	<!-- 直接传入静态值，也能渲染成功，但是"6"会被当做字符串 -->
+	<blog-post likes="6"></blog-post>
+
+	<!-- 所以需要用 `v-bind` 来告诉 Vue，这是一个 JavaScript 表达式而不是一个字符串。这在后面的值类型检查中很有用。-->
+	<blog-post v-bind:likes="66"></blog-post>
+
+	<!-- 用一个变量进行动态赋值。-->
+	<blog-post v-bind:likes="post.likes"></blog-post>
+</div>
+<script>
+	Vue.component('blog-post', {
+		props: ['likes'],
+		template: '<span>{{ likes }}个笔芯</span>'
+	})
+
+	new Vue({
+		el: "#demo3",
+		data: {
+			post: {
+				likes: 666
+			}
+		}
+	})
+</script>
+
+<hr>
+<!-- 3. 传入一个布尔值 -->
+<div id="demo4">
+	<!-- 包含该 prop 没有值的情况在内，官方文档说都意味着 `true`。但实际测试空值是 fasle。？？？？？？-->
+	<blog-post is-published></blog-post>
+
+	<!-- 此处"false"是一个字符串，所以会被当做一个真值。最终渲染为 ： 已发表. -->
+	<blog-post is-published="false"></blog-post>
+	<!-- 若想真正赋值一个布尔类型的false，需要用 `v-bind` 来告诉 Vue，这是一个 JavaScript 表达式而不是一个字符串。-->
+	<blog-post v-bind:is-published="false"></blog-post>
+
+	<!-- 用一个变量进行动态赋值。-->
+	<blog-post v-bind:is-published="post.isPublished"></blog-post>
+</div>
+<script>
+	Vue.component('blog-post', {
+		props: ['isPublished'],
+		template: '<div><span v-if="isPublished">{{ isPublished }}: 已发表.</span><span v-else>{{ isPublished }}: 未发表.</span></div>'
+	})
+
+	new Vue({
+		el: "#demo4",
+		data: {
+			post: {
+				isPublished: true
+			}
+		}
+	})
+</script>
+
+<hr>
+<!-- 5. 传入一个数组 -->
+<div id="demo5">
+	<!-- 包含该 prop 没有值的情况在内，官方文档说都意味着 `true`。但实际测试空值是 fasle。？？？？？？-->
+	<blog-post is-published></blog-post>
+
+	<!-- 此处"false"是一个字符串，所以会被当做一个真值。最终渲染为 ： 已发表. -->
+	<blog-post is-published="false"></blog-post>
+	<!-- 若想真正赋值一个布尔类型的false，需要用 `v-bind` 来告诉 Vue，这是一个 JavaScript 表达式而不是一个字符串。-->
+	<blog-post v-bind:is-published="false"></blog-post>
+
+	<!-- 用一个变量进行动态赋值。-->
+	<blog-post v-bind:is-published="post.isPublished"></blog-post>
+</div>
+<script>
+	Vue.component('blog-post', {
+		props: ['isPublished'],
+		template: '<div><span v-if="isPublished">{{ isPublished }}: 已发表.</span><span v-else>{{ isPublished }}: 未发表.</span></div>'
+	})
+
+	new Vue({
+		el: "#demo5",
+		data: {
+			post: {
+				commentIds: 
+			}
+		}
+	})
+</script>
+
+</body>
+</html>
